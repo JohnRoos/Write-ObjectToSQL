@@ -78,7 +78,7 @@ Some properties will be ignored because the data types are not supported.
 ```powershell
 PS C:\> Get-Process | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName ProcessTable -ShowIgnoredPropertiesOnly
 ```
-
+```text
 DependentServices
 ServiceHandle
 Status
@@ -87,6 +87,7 @@ Container
 RequiredServices
 ServiceType
 Site
+```
 
 This is useful for debugging. When using the parameter switch ShowIgnoredPropertiesOnly the cmdlet will not do anything in the database.
 Instead it will show which properties that will be ignored (unsupported data types). A complete run is still simulated so this command 
@@ -127,8 +128,10 @@ This will insert the objects into a MySQL database. Running this multiple times 
 When inserting objects into an existing table, use the parameter '-DoNotCreateTable' to avoid these errors if you are using a custom connection string.
    
 NOTE: As this is experimental it migth not work. I got it to work with MySQL as the example above shows, but I give no guarantees :)
+
 NOTE: It might work with other database engines as long as you have the proper connection string but I havent tested that.
 If you want to try it out, check www.connectionstrings.com to find the connection string you need. You might also need to install ODBC or OLEDB drivers.
+
 ## Inputs
 The script accepts an object as input from the pipeline.
 ## Outputs
@@ -136,50 +139,53 @@ Outputs the result from the insert queries to the console together with some sta
 
 ## Future improvements
 
-Add support for Timespan data type
-Add SQL support for datetime data type
-Add credential parameter
-Add support for SQL Server accounts
+* Add support for Timespan data type
+* Add SQL support for datetime data type
+* Add credential parameter
+* Add support for SQL Server accounts
                     
 ## Fixed
-Several new data types added
-Now both creates the table and inserts the values
-Fix empty property bug on subsequent objects in pipeline
-Rewrote the property parsing completely
-Moved repeated code to BEGIN for performance reasons
-Generate SQL code only as a string with tablename validation
-New parameter - Do not create table (fail if not exist)
-New parameter - Only output "properties ignored" (easier to use when adding new data types)
-New parameter to report progress at every X processed object - ReportEveryXObject
-Add measure time functionality. Show time taken in seconds when showing how many rows were inserted.
-Tidied up the code, removed obsolete comments
-Fix proper verbose and warnings
-Verified 'System.UInt32' compared to SQL Server data types
-Make sure that ' is handled properly when inserting values
-Add N'' for strings in inserts for SQL Server instead of just ''
-Remove ' when creating table (replace "'" with "")
-Add custom DB connection to avoid dependencies to other cmdlets
-Fail the whole script if the first SELECT statement fails
-Added several new data types (avoided BigInteger on purpose since it does not have proper max/min values)
-Updated examples in the header
-Add parameter TimespanType for selecting what to use when using Timespan. Options: Hours, Minutes, Seconds, Milliseconds
-Add parameter sets to validate properly when using SQL Server compared to custom connection string
-If any parameter is missing, fail the whole script (parameter grouping is needed)
-Merge $modconnection and $connection since they are basically the same
-Add OLEDB connection string functionality
-Verify with MySQL and OLEDB
-Fix so that properties can be handled even if NULL
-Add switch TryAllPropertyTypes in case someone wants to insert more than just regular properties
-Modified the loops generating database queries so that not that much code is repeating
-Added support for hashtables. The scripts will now insert the hash values into columns named as the hash keys.
-Rewrote the script to use a few functions instead.
-Added better error handling if all properties are ignored.
+* Several new data types added
+* Now both creates the table and inserts the values
+* Fix empty property bug on subsequent objects in pipeline
+* Rewrote the property parsing completely
+* Moved repeated code to BEGIN for performance reasons
+* Generate SQL code only as a string with tablename validation
+* New parameter - Do not create table (fail if not exist)
+* New parameter - Only output "properties ignored" (easier to use when adding new data types)
+* New parameter to report progress at every X processed object - ReportEveryXObject
+* Add measure time functionality. Show time taken in seconds when showing how many rows were inserted.
+* Tidied up the code, removed obsolete comments
+* Fix proper verbose and warnings
+* Verified 'System.UInt32' compared to SQL Server data types
+* Make sure that ' is handled properly when inserting values
+* Add N'' for strings in inserts for SQL Server instead of just ''
+* Remove ' when creating table (replace "'" with "")
+* Add custom DB connection to avoid dependencies to other cmdlets
+* Fail the whole script if the first SELECT statement fails
+* Added several new data types (avoided BigInteger on purpose since it does not have proper max/min values)
+* Updated examples in the header
+* Add parameter TimespanType for selecting what to use when using Timespan. Options: Hours, Minutes, Seconds, Milliseconds
+* Add parameter sets to validate properly when using SQL Server compared to custom connection string
+* If any parameter is missing, fail the whole script (parameter grouping is needed)
+* Merge $modconnection and $connection since they are basically the same
+* Add OLEDB connection string functionality
+* Verify with MySQL and OLEDB
+* Fix so that properties can be handled even if NULL
+* Add switch TryAllPropertyTypes in case someone wants to insert more than just regular properties
+* Modified the loops generating database queries so that not that much code is repeating
+* Added support for hashtables. The scripts will now insert the hash values into columns named as the hash keys.
+* Rewrote the script to use a few functions instead.
+* Added better error handling if all properties are ignored.
 
 # Links
 
 SQL Server data types: http://msdn.microsoft.com/en-us/library/ms187752.aspx
+
 C# data types: http://msdn.microsoft.com/en-us/library/ya5y69ds.aspx
+
 Built-In Types Table (C# Reference): http://msdn.microsoft.com/en-us/library/ya5y69ds.aspx
+
 VB data types: http://msdn.microsoft.com/en-us/library/47zceaw7.aspx
 
 VB.Net data types: http://www.tutorialspoint.com/vb.net/vb.net_data_types.htm
