@@ -1,7 +1,7 @@
 # Write-ObjectToSQL
 This Powershell cmdlet inserts properties of an object into a table. The table will be created if it doesnt exist. The cmdlet accepts object from the pipeline which makes this very useful when you want to easily save the output from a script in a database.
 
-# DESCRIPTION
+# Description
 Writes an object into a database table. If the table does not exist it will be created based on the 
 properties of the object. For every property of the object a column will be created. The data type for 
 each column will be converted from .Net data types into SQL Server data types.
@@ -39,33 +39,29 @@ You can verify your objects with the Get-Member cmdlet and check the MemberType.
 
 Currently the script supports the following data types:
 
-Int32
-UInt32
-Int16
-UInt16
-Int64
-UInt64
-long
-int
-Decimal
-Single
-Double
-Byte
-SByte
-String
-DateTime
-TimeSpan
-datetime
-string
-bool
-Boolean
+* Int32
+* UInt32
+* Int16
+* UInt16
+* Int64
+* UInt64
+* long
+* int
+* Decimal
+* Single
+* Double
+* Byte
+* SByte
+* String
+* DateTime
+* TimeSpan
+* datetime
+* string
+* bool
+* Boolean
 
 
-Version 1.6
-Created by John Roos 
-Email: john.m.roos@gmail.com
-   
-.EXAMPLE
+# Example 1
 PS C:\> Get-Process | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName ProcessTable
 
 Creates a table called ProcessTable (if it doesnt exist) based on the result from Get-Process.
@@ -87,7 +83,7 @@ This is useful for debugging. When using the parameter switch ShowIgnoredPropert
 Instead it will show which properties that will be ignored (unsupported data types). A complete run is still simulated so this command 
 takes about the same time as if you would have inserted the objects into the table.
 
-.EXAMPLE
+# Example 2
 PS C:\> Get-Process | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName ProcessTable -ReportEveryXObject 20
    
 2014-12-20 11:56:12 - Rows inserted: 20 (100 rows per second)
@@ -98,19 +94,19 @@ Inserted 68 rows into ProcessTable in 0.41 seconds (165.85 rows per second)
 This will insert objects into the database as usual with one difference: It will report back to the console every 20th object so that 
 some kind of progress is shown. The cmdlet does not know how many objects are coming down the pipeline so this only shows what has 
 happened, not how many objects that are left to process.
-.EXAMPLE
+# Example 3
 PS C:\> Get-Process | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName ProcessTable -TimeSpanType Milliseconds
    
 Inserted 68 rows into ProcessTable in 500.04 milliseconds (136 rows per second)
 
 The TimeSpanType parameter can be used if you want to get the time it takes to run the script in a different kind of timespan type.
 There are four alternatives: Hours, Hinutes, Seconds and Milliseconds.
-.EXAMPLE
+# Example 4
 PS C:\> Get-WmiObject -ComputerName 'localhost' -Query "select * from win32_networkadapter where NetConnectionStatus = 2" | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName wminetworkadapter
 
 This is where the script becomes useful. This inserts information about the network adapters in localhost into a table called wminetworkadapter.
 Replace 'localhost' with a list of servers and you quickly have a simple inventory of network adapters on your servers.
-.EXAMPLE
+# Example 5
 PS C:\> Get-Process | Write-ObjectToSQL -ConnectionString "Provider=MySQL Provider; Data Source=Server01; User ID=MyUserName; Password=MyPassword; Initial Catalog=MyDatabaseName;" -TableName MyTableName
 
 Experimental:
@@ -121,11 +117,11 @@ When inserting objects into an existing table, use the parameter '-DoNotCreateTa
 NOTE: As this is experimental it migth not work. I got it to work with MySQL as the example above shows, but I give no guarantees :)
 NOTE: It might work with other database engines as long as you have the proper connection string but I havent tested that.
 If you want to try it out, check www.connectionstrings.com to find the connection string you need. You might also need to install ODBC or OLEDB drivers.
-.INPUTS
+# Inputs
 The script accepts an object as input from the pipeline.
-.OUTPUTS
+# Outputs
 Outputs the result from the insert queries to the console together with some statistics on how long it took and the speed (rows per second).
-.NOTES
+# Notes
 
 Future improvements:
                 Add support for Timespan data type
@@ -167,7 +163,7 @@ Fixed:
                 Rewrote the script to use a few functions instead.
                 Added better error handling if all properties are ignored.
 
-.LINK
+# Links
 SQL Server data types                http://msdn.microsoft.com/en-us/library/ms187752.aspx
 C# data types                        http://msdn.microsoft.com/en-us/library/ya5y69ds.aspx
 Built-In Types Table (C# Reference)  http://msdn.microsoft.com/en-us/library/ya5y69ds.aspx
