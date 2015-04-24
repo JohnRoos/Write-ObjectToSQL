@@ -168,6 +168,7 @@
                     Added support for hashtables. The scripts will now insert the hash values into columns named as the hash keys.
                     Rewrote the script to use a few functions instead.
                     Added better error handling if all properties are ignored.
+                    Fixed a bug where insert statements based on a string property that had the same name as a reserved property was failing
 
 .LINK
     SQL Server data types                http://msdn.microsoft.com/en-us/library/ms187752.aspx
@@ -681,7 +682,7 @@ function Write-ObjectToSQL
                         $null = $strBuilderValues.Append(", NULL")
                     }
                 }elseif ( $stringtypes.ContainsKey( $datatype ) ){
-                    $null = $strBuilderColumns.Append(", $quoteFirst$($key.Replace(' ','_'))$quoteLast")
+                    $null = $strBuilderColumns.Append(", $quoteFirst$prekey$($key.Replace(' ','_'))$quoteLast")
                     $strtmp = $InputObject.$key -replace "'", "''"
                     if ($ConnectionString){ 
                         $null = $strBuilderValues.Append(", '$strtmp'")
