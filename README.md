@@ -1,5 +1,6 @@
 # Write-ObjectToSQL
-This Powershell cmdlet inserts properties of an object into a table. The table will be created if it doesnt exist. The cmdlet accepts object from the pipeline which makes this very useful when you want to easily save the output from a script in a database.
+This Powershell cmdlet inserts properties of an object into a table. The table will be created if it doesnt exist. The cmdlet accepts object from the pipeline which makes this very useful when you want to easily save the output from a script in a database.<br>
+More information can be found in this blog post: http://blog.roostech.se/2015/02/powershell-write-object-to-sql.html
 
 ## Description
 Writes an object into a database table. If the table does not exist it will be created based on the 
