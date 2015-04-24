@@ -178,6 +178,7 @@ Outputs the result from the insert queries to the console together with some sta
 * Added support for hashtables. The scripts will now insert the hash values into columns named as the hash keys.
 * Rewrote the script to use a few functions instead.
 * Added better error handling if all properties are ignored.
+* Fixed a bug where insert statements based on a string property that had the same name as a reserved property was failing.
 
 # Links
 
