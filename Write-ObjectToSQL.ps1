@@ -63,9 +63,10 @@
        Boolean
 
 
-   Version 1.6
+   Version 1.7
    Created by John Roos 
    Email: john.m.roos@gmail.com
+   Web: http://blog.roostech.se
    
 .EXAMPLE
    PS C:\> Get-Process | Write-ObjectToSQL -Server localhost\sqlexpress -Database MyDB -TableName ProcessTable
