@@ -63,9 +63,9 @@
        Boolean
 
 
-   Version 1.7
+   Version 1.8
    Created by John Roos 
-   Email: john.m.roos@gmail.com
+   Email: john@roostech.se
    Web: http://blog.roostech.se
    
 .EXAMPLE
@@ -131,7 +131,6 @@
 .NOTES
 
    Future improvements:
-                    Add support for Timespan data type
                     Add SQL support for datetime data type
                     Add credential parameter
                     Add support for SQL Server accounts
@@ -170,6 +169,7 @@
                     Rewrote the script to use a few functions instead.
                     Added better error handling if all properties are ignored.
                     Fixed a bug where insert statements based on a string property that had the same name as a reserved property was failing
+                    Added support for Timespan data type. Timespan will be converted to Ticks when stored in the table.
 
 .LINK
     SQL Server data types                http://msdn.microsoft.com/en-us/library/ms187752.aspx
@@ -338,7 +338,7 @@ function Write-ObjectToSQL
         $generatefirst = $true
 
         $numbertypes = @{
-        #   PS datatype       = SQL data type
+        #    PS datatype        = SQL data type
             'System.Int32'      = 'int';
             'System.UInt32'     = 'bigint';
             'UInt32'            = 'bigint';
@@ -353,15 +353,15 @@ function Write-ObjectToSQL
             'System.Double'     = 'float';
             'System.Byte'       = 'tinyint';
             'System.SByte'      = 'smallint';
+            'System.TimeSpan'   = 'bigint';
+            'timespan'          = 'bigint';
         }
             
         $stringtypes = @{
         #   PS datatype       = SQL data type
             'System.String'   = 'nvarchar(1000)';
-            'System.DateTime' = 'nvarchar(50)';
-            'System.TimeSpan' = 'nvarchar(1000)';
-            'datetime'        = 'nvarchar(50)';
-            'timespan'        = 'nvarchar(1000)';
+            'System.DateTime' = 'datetime';
+            'datetime'        = 'datetime';
             'string'          = 'nvarchar(1000)';
             'bool'            = 'bit';
             'System.Boolean'  = 'bit';
@@ -374,7 +374,7 @@ function Write-ObjectToSQL
         }
 
         if ($ReportEveryXObject){
-            $whentoreport = $ReportEveryXObject;
+            $whentoreport = $ReportEveryXObject
         }else{
             $whentoreport = 0
         }
@@ -541,7 +541,7 @@ function Write-ObjectToSQL
 
                 foreach ($rescol in $reservedcolumns.Keys){
                     if ($key -eq $rescol){
-                        $prekey = $reservedcolumns.$rescol;
+                        $prekey = $reservedcolumns.$rescol
                     }
                 }
                     
@@ -652,7 +652,7 @@ function Write-ObjectToSQL
             # if the property has the same name as one of the reserved columns then rename it
             foreach ($rescol in $reservedcolumns.Keys){
                 if ($key -eq $rescol){
-                    $prekey = $reservedcolumns.$rescol;
+                    $prekey = $reservedcolumns.$rescol
                 }
             }
             
@@ -678,7 +678,13 @@ function Write-ObjectToSQL
                     $null = $strBuilderColumns.Append(", $prekey$($key.Replace(' ','_'))")
 
                     if ($($InputObject.$key)){
-                        $null = $strBuilderValues.Append(", $($InputObject.$key)")
+                        if ($datatype -eq 'timespan' -or $datatype -eq 'System.TimeSpan') {
+                            Write-Verbose "Timespan found ($key). Converting to ticks."
+                            $null = $strBuilderValues.Append(", $(($InputObject.$key).Ticks)")
+                        }else{
+                            $null = $strBuilderValues.Append(", $($InputObject.$key)")
+                        }
+                        
                     }else{
                         $null = $strBuilderValues.Append(", NULL")
                     }
