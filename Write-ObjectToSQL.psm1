@@ -131,9 +131,7 @@
 .NOTES
 
    Future improvements:
-                    Add SQL support for datetime data type
-                    Add credential parameter
-                    Add support for SQL Server accounts
+                    Change so that no ODBC or OLEDB drivers are needed for other database types.
                     
     Fixed:
                     Several new data types added
@@ -170,6 +168,10 @@
                     Added better error handling if all properties are ignored.
                     Fixed a bug where insert statements based on a string property that had the same name as a reserved property was failing
                     Added support for Timespan data type. Timespan will be converted to Ticks when stored in the table.
+                    Added SQL support for datetime data type
+                    Added credential parameter
+                    Added support for SQL Server accounts (using the credential parameter)
+                    Improved error handling to avoid getting WriteErrorException
 
 .LINK
     SQL Server data types                http://msdn.microsoft.com/en-us/library/ms187752.aspx
@@ -213,6 +215,14 @@ function Write-ObjectToSQL
                    ValueFromPipeline=$False)]
         [ValidateNotNullorEmpty()]
         [string]$Database = 'SlabLab',
+
+        # Credential to use when opening the connection to the server.
+        [Parameter(Mandatory=$False,
+                   ParameterSetName='mssql',
+                   HelpMessage="Please specify a credential.",
+                   ValueFromPipeline=$False)]
+        [System.Management.Automation.PSCredential]
+        $Credential,
 
         # Connection string when not using SQL Server
         # This is experimental. See examples.
@@ -402,7 +412,11 @@ function Write-ObjectToSQL
             $script:modconnection = New-Object -TypeName System.Data.OleDb.OleDbConnection
         } else {
             Write-Verbose 'Using SQL Server.'
-            $constr = "Server=$Server;Database=$Database;Trusted_Connection=True;"
+            if ($Credential){
+                $constr = "Server=$Server;Database=$Database;Trusted_Connection=False;User ID=`"$($Credential.UserName)`";Password=`"$($Credential.GetNetworkCredential().Password)`""
+            }else{
+                $constr = "Server=$Server;Database=$Database;Trusted_Connection=True;"
+            }
             $script:modconnection = New-Object -TypeName System.Data.SqlClient.SqlConnection
         }
         
@@ -418,8 +432,10 @@ function Write-ObjectToSQL
             Write-Verbose 'Connection to database opened successfully.'
         }
         catch {
-            Write-Error $error[0]
-            Write-Warning "Could not connect to the database. See SQL query error message above."
+            Write-Warning "Could not open the connection. See error message below3."
+            Write-Error $_.Exception.Message
+            throw
+            
         }
         $ErrorActionPreference = $originalErrorActionPreference
 
@@ -744,7 +760,7 @@ function Write-ObjectToSQL
                 Write-Verbose "Row inserted"
                 $rowsinserted++
             } catch {
-                Write-Error $error[0]
+                Write-Error $_.Exception.Message
                 Write-Warning "Could not insert row into database. See SQL query error message above."
                 $rowsfailed++
             }
