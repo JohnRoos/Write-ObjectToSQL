@@ -130,9 +130,6 @@
    Outputs the result from the insert queries to the console together with some statistics on how long it took and the speed (rows per second).
 .NOTES
 
-   Future improvements:
-                    Change so that no ODBC or OLEDB drivers are needed for other database types.
-                    
     Fixed:
                     Several new data types added
                     Now both creates the table and inserts the values
@@ -160,6 +157,7 @@
                     Merge $modconnection and $connection since they are basically the same
                     Add OLEDB connection string functionality
                     Verify with MySQL and OLEDB
+                    Drivers and providers for other database types can be found on NuGet.org or PowerShellGallery.com
                     Fix so that properties can be handled even if NULL
                     Add switch TryAllPropertyTypes in case someone wants to insert more than just regular properties
                     Modified the loops generating database queries so that not that much code is repeating
@@ -497,9 +495,7 @@ function Write-ObjectToSQL
             return $typeresult
         }
 
-        ##################################
-        #####       MAIN START       #####
-        ##################################
+        #### PROCESS ####
 
         # if this is the first object in the pipeline, start processing the starting stuff (only needed on the first object)
         if ($generatefirst){    
