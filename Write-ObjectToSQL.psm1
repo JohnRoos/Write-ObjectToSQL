@@ -373,6 +373,8 @@ function Write-ObjectToSQL
             'string'          = 'nvarchar(1000)';
             'bool'            = 'bit';
             'System.Boolean'  = 'bit';
+            'Guid'            = 'nvarchar(40)'
+            'System.Guid'     = 'nvarchar(40)'
         }
 
         $reservedcolumns = @{
