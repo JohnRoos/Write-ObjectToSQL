@@ -61,9 +61,10 @@
        string
        bool
        Boolean
+       Guid
 
 
-   Version 1.8
+   Version 1.9
    Created by John Roos 
    Email: john@roostech.se
    Web: http://blog.roostech.se
@@ -170,6 +171,7 @@
                     Added credential parameter
                     Added support for SQL Server accounts (using the credential parameter)
                     Improved error handling to avoid getting WriteErrorException
+                    Added support for System.Guid
 
 .LINK
     SQL Server data types                http://msdn.microsoft.com/en-us/library/ms187752.aspx
